@@ -1,22 +1,47 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import { useEffect } from 'react'
 
-import styles from './styles.css'
+function useBrowserHistory(name, isOpen, onBack, onForward) {
+  function handleBack() {
+    if (window.history.state && window.history.state[name]) {
+      window.history.go(-1)
+    }
 
-export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
+    if (onBack) {
+      onBack()
+    }
   }
 
-  render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
+  function handleForward(args) {
+    if (onForward) {
+      onForward()
+    }
   }
+
+  useEffect(() => {
+    window.addEventListener('popstate', handlePopState)
+
+    if (isOpen && (!window.history.state || !window.history.state[name])) {
+      window.history.pushState({ [name]: true }, '')
+    }
+
+    function handlePopState(event) {
+      if (!event.state || !event.state[name]) {
+        handleBack()
+      } else {
+        handleForward()
+      }
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+
+      if (isOpen) {
+        handleBack()
+      }
+    }
+  }, [isOpen])
+
+  return [handleBack, handleForward]
 }
+
+export default useBrowserHistory
