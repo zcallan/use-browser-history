@@ -1,13 +1,17 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
 import ExampleComponent from 'use-browser-history'
 
-export default class App extends Component {
-  render () {
-    return (
-      <div>
-        <ExampleComponent text='Modern React component module' />
-      </div>
-    )
-  }
+function App() {
+  const [count, setCount] = useState( 0 );
+
+  return (
+    <div>
+      <p>Hello! Count: {count}</p>
+      <button onClick={() => setCount( count + 1 )}>Increment</button>
+    </div>
+  );
 }
+
+export default App;
+
