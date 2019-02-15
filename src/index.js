@@ -52,7 +52,11 @@ function useBrowserHistory(name, isActive, onBack, onForward) {
      * push our new entry onto the stack. From hereon, when the browser back button is pressed,
      * the page won't change, and we can handle that event above to fire our internal functions. */
     if (isActive && (!window.history.state || !window.history.state[name])) {
-      window.history.pushState({ [name]: true }, '')
+      /* Push the new entry to the state, as well as any existing state in the browser history. */
+      window.history.pushState({
+        ...window.history.state,
+        [name]: true
+      }, '')
     }
 
     /* Perform clean up in here. */
