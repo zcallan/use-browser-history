@@ -11,9 +11,17 @@ function useBrowserHistory(name, isOpen, onBack, onForward) {
     }
   }
 
-  function handleForward(args) {
+  function handleForward() {
     if (onForward) {
       onForward()
+    }
+  }
+
+  function handlePopState(event) {
+    if (!event.state || !event.state[name]) {
+      handleBack()
+    } else {
+      handleForward()
     }
   }
 
@@ -22,14 +30,6 @@ function useBrowserHistory(name, isOpen, onBack, onForward) {
 
     if (isOpen && (!window.history.state || !window.history.state[name])) {
       window.history.pushState({ [name]: true }, '')
-    }
-
-    function handlePopState(event) {
-      if (!event.state || !event.state[name]) {
-        handleBack()
-      } else {
-        handleForward()
-      }
     }
 
     return () => {
